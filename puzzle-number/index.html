@@ -1,0 +1,215 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#puzzle span {
+		display: inline-block;
+		height: 150px;
+		background: pink;
+		text-align: center;
+		font-size: 60px;
+		border: 5px solid black;
+		background-image: url("images/frozen.jpg");
+		background-repeat: no-repeat;
+		background-size: 400%;
+	}
+	#puzzle span i {
+	    font-size: 20px;
+		width: 30px;
+		height: 30px;
+		background: lightblue;
+		display: block;
+		line-height: 30px;
+	}
+	#puzzle span[data-val='-1'] {
+		background: black;
+		font-size: 0;
+	}
+	#puzzle span[data-val='-1'] i {
+		display: none;
+	}
+	<!-- #puzzle span[data-val='1'], #puzzle span[data-val='4'], #puzzle span[data-val='7'], #puzzle span[data-val='10'] { -->
+		<!-- background-color: orange; -->
+	<!-- } -->
+	<!-- #puzzle span[data-val='2'], #puzzle span[data-val='5'], #puzzle span[data-val='8'] { -->
+		<!-- background-color: lightblue; -->
+	<!-- } -->
+	#puzzle span[data-val='1'] {
+		background-position: 33.3% 0;
+	}
+	#puzzle span[data-val='2'] {
+		background-position: 66.6% 0;
+	}
+	#puzzle span[data-val='3'] {
+		background-position: 100% 0;
+	}
+	#puzzle span[data-val='4'] {
+		background-position: 0 33.3%;
+	}
+	#puzzle span[data-val='5'] {
+		background-position: 33.3% 33.3%;
+	}
+	#puzzle span[data-val='6'] {
+		background-position: 66.6% 33.3%;
+	}
+	#puzzle span[data-val='7'] {
+		background-position: 100% 33.3%;
+	}
+	#puzzle span[data-val='8'] {
+		background-position: 0 66.66%;
+	}
+	#puzzle span[data-val='9'] {
+		background-position: 33.3% 66.66%;
+	}
+	#puzzle span[data-val='10'] {
+		background-position: 66.6% 66.66%;
+	}
+	#puzzle span[data-val='11'] {
+		background-position: 100% 66.66%;
+	}
+	#puzzle span[data-val='12'] {
+		background-position: 0 100%;
+	}
+	#puzzle span[data-val='13'] {
+		background-position: 33.3% 100%;
+	}
+	#puzzle span[data-val='14'] {
+		background-position: 66.6% 100%;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-12">
+			<div id="puzzle" class="row">
+			</div>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	var max_col = 4;
+	var max_row = 4;
+	var items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, -1];
+	
+	var puzzle = Array(max_row).fill(0).map(x => Array(max_col).fill(0));
+	
+	
+	function shufflePuzzle(move) {
+		var empty_col = max_col - 1;
+		var empty_row = max_row - 1;
+		for (var i = 0; i < move; i++) {
+			var direction = Math.floor(Math.random()*4);
+			console.log(direction, empty_row, empty_col);
+			if (direction == 0 && empty_row - 1 > -1) {
+				update_val(empty_row, empty_col, puzzle[empty_row - 1][empty_col].val);
+				update_val(empty_row - 1, empty_col, -1);
+				empty_row = empty_row - 1;
+				console.log("up");
+			} else if (direction == 1 && empty_row + 1 < max_row) {
+				update_val(empty_row, empty_col, puzzle[empty_row + 1][empty_col].val);
+				update_val(empty_row + 1, empty_col, -1);
+				empty_row = empty_row + 1;
+				console.log("down");
+			} else if (direction == 2 && empty_col - 1 > -1) {
+				update_val(empty_row, empty_col, puzzle[empty_row][empty_col - 1].val);
+				update_val(empty_row, empty_col - 1, -1);
+				empty_col = empty_col - 1;
+				console.log("left");
+			} else if (direction == 3 && empty_col + 1 < max_col) {
+				update_val(empty_row, empty_col, puzzle[empty_row][empty_col + 1].val);
+				update_val(empty_row, empty_col + 1, -1);
+				empty_col = empty_col + 1;
+				console.log("right");
+			}
+		}
+		
+		console.log(puzzle);
+	}
+	
+	function generate_puzzle() {
+		$("#puzzle").html("");
+		var k = 0;
+		for(var i=0; i < max_row; i++){
+			for(var j=0; j < max_col; j++){
+				var label = items[k];
+				var el = $("<span data-row='"+i+"' data-col='"+j+"' data-val='"+label+"' class='col-3'><i>"+label+"</i></span>");
+				puzzle[i][j] = {
+					val: label,
+					el: el,
+				};
+				$("#puzzle").append(el);
+				k++;
+			}
+		}
+	}
+	
+	function update_val(row, col, newval){
+		var el = puzzle[row][col].el;
+		el.attr("data-val", newval);
+		el.html("<i>"+newval+"</i>");
+		puzzle[row][col].val = newval;
+	}
+	
+	generate_puzzle();
+	shufflePuzzle(200);
+	
+	$("#puzzle span").on("click", function(){
+		var col = parseInt($(this).attr("data-col"));
+		var row = parseInt($(this).attr("data-row"));
+		var val = parseInt($(this).attr("data-val"));
+		console.log(col, row, val);
+		
+		// check up pos
+		if(row - 1 !== -1 && puzzle[row-1][col].val == -1) {
+			console.log("up");
+			update_val(row, col, -1);
+			update_val(row-1, col, val);
+			sfx1.currentTime = 0;
+			sfx1.play();
+		}
+		// check down pos
+		else if(row + 1 < max_row && puzzle[row+1][col].val == -1) {
+			console.log("down");
+			update_val(row, col, -1);
+			update_val(row+1, col, val);
+			sfx1.currentTime = 0;
+			sfx1.play();
+		}
+		// check left pos
+		else if(col - 1 !== -1 && puzzle[row][col-1].val == -1) {
+			console.log("left");
+			update_val(row, col, -1);
+			update_val(row, col-1, val);
+			sfx1.currentTime = 0;
+			sfx1.play();
+		}
+		// check right pos
+		else if(col + 1 < max_col && puzzle[row][col+1].val == -1) {
+			console.log("right");
+			update_val(row, col, -1);
+			update_val(row, col+1, val);
+			sfx1.currentTime = 0;
+			sfx1.play();
+		}
+	});
+  </script>
+</body>
+</html>
