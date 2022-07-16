@@ -1,0 +1,195 @@
+<html>
+<head>
+<meta name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: url(bg.png) center center repeat;
+		background-size: 100%;
+	}
+	#question img {
+		width: 150px;
+		height: 150px;
+		display: block;
+		margin: 0 auto;
+	}
+	.answer {
+		padding-top: 50px;
+		text-align: center;
+	}
+	.answer img {
+		width: 150px;
+		height: 150px;
+		display: inline-block;
+	}
+	.answer.hidden img {
+		display: none;
+	}
+	.answer.hidden:after {
+		content: "";
+		display: inline-block;
+		width: 150px;
+		height: 150px;
+		background: white;
+	}
+	.answer.correct img {
+		display: inline-block;
+	}
+	.answer.correct:after {
+		content: none;
+	}
+	.answer.wrong:after {
+		background: red;
+	}
+	
+	@media screen and (max-width: 667px) {
+		#question img, .answer img, .answer.hidden:after {
+			width: 120px;
+			height: 120px;
+		}
+		.answer {
+			padding-top: 20px;
+		}
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-12">
+			<div id="question"><img src="../images-library/dog.jpg" /></div>
+		</div>
+	  </div>
+	  <div class="row options">
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	var img_url = "../images-library/";
+	var pic = [
+		'apple',
+		'alligator',
+		'acorn',
+		'ball',
+		'bike',
+		'bee',
+		'car',
+		'cat',
+		'crab',
+		'dog',
+		'daddy',
+		'duck',
+		'egg',
+		'ear',
+		'elephant',
+		'elsa',
+		'frog',
+		'hat',
+		'hippo',
+		'anna',
+		'cinderella',
+		'repunzel',
+		'arielle',
+		'moana',
+		'belle',
+		'snowwhite',
+		'aurora',
+		'tiana',
+		'heart',
+		'baby',
+		'zebra',
+		'malificent',
+		'giraffe',
+		'orange',
+		'camel',
+		'broccoli',
+		'carrot',
+		'rice',
+		'pig',
+		'owl',
+		'fox',
+		'guitar',
+		'watermelon',
+		'yoyo',
+		'xylophone',
+		'cucumber',
+		'ice cream',
+		'juice',
+		'house',
+		'spider',
+		'shoes',
+		'snail',
+		'snake',
+		'monkey',
+	];
+	var question;
+	
+	function init_question() {
+		var shuffled_pics = pic.sort(function (a, b) { return 0.5 - Math.random() });
+		question = shuffled_pics[0];
+		$("#question img").attr('src', img_url+question+'.jpg').attr('data-pic', question);
+	
+		var options = [
+			shuffled_pics[0],
+			shuffled_pics[1],
+			shuffled_pics[2],
+			shuffled_pics[3],
+			shuffled_pics[4],
+			shuffled_pics[5],
+			shuffled_pics[6],
+			shuffled_pics[7]
+		];
+		var shuffled_options = options.sort(function (a, b) { return 0.5 - Math.random() });
+		$(".container .options").html("");
+		for(var i = 0; i < shuffled_options.length; i++) {
+			$(".container .options").append("<div class='col col-md-3 col-sm-6 answer' data-pic='"+shuffled_options[i]+"'><img src='"+img_url+shuffled_options[i]+".jpg' /></div>");
+		}
+		
+		$("#question img").css('opacity', '0');
+		
+		setTimeout(function(){
+			$("#question img").css('opacity', '1');
+			$(".answer").addClass('hidden');
+		}, 15000);
+	}
+	init_question();
+	
+	$(".container").on("click", ".answer.hidden", function(){
+		var el = $(this);
+		var correct_pic = $("#question img").attr('data-pic');
+		var choice = el.attr("data-pic");
+		var correct = choice == correct_pic;
+		el.addClass(correct ? "correct" : "wrong");
+		
+		if(correct) {
+			sfx1.currentTime = 0;
+			sfx1.play();
+		} else {
+			sfx2.currentTime = 0;
+			sfx2.play();
+		}
+		
+		setTimeout(function() {
+			el.removeClass("correct");
+			el.removeClass("wrong");
+			if(correct){
+				init_question();
+			}
+		}, 2000);
+	});
+  </script>
+</body>
+</html>
