@@ -1,0 +1,133 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#question {
+		background-image: url(dominoes.png);
+		width: 300px;
+		height: 495px;
+		
+	}
+	#question.q1 {
+		background-position: 8px -490px;
+	}
+	#question.q2 {
+		background-position: -275px -490px;
+	}
+	#question.q3 {
+		background-position: -553px -490px;
+	}
+	#question.q4 {
+		background-position: -830px -490px;
+	}
+	#question.q5 {
+		background-position: -1111px -490px;
+	}
+	#question.q6 {
+		background-position: -1390px -490px;
+	}
+	#question.q7 {
+		background-position: -1672px -490px;
+	}
+	#question.q8 {
+		background-position: -1950px -490px;
+	}
+	#question.q9 {
+		background-position: -2228px -490px;
+	}
+	#question.q10 {
+		background-position: -2510px -490px;
+	}
+	#answer span {
+		display: inline-block;
+		padding: 15px 50px;
+		background: purple;
+		margin: 5px;
+		font-size: 40px;
+		color: white;
+	}
+	#answer span.correct {
+		background: lightgreen;
+	}
+	#answer span.wrong {
+		background: red;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-8">
+			<div id="question">
+			</div>
+		</div>
+		<div class="col-4">
+			<div id="answer">
+				<span data-val="1">1</span>
+				<span data-val="2">2</span>
+				<span data-val="3">3</span>
+				<span data-val="4">4</span>
+				<span data-val="5">5</span>
+				<span data-val="6">6</span>
+				<span data-val="7">7</span>
+				<span data-val="8">8</span>
+				<span data-val="9">9</span>
+				<span data-val="10">10</span>
+			</div>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="../sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	
+	var question = 1;
+	
+	function randomize_questions() {
+		question = Math.floor(Math.random() * 6) + 5;
+		console.log(question)
+		$("#question").attr('class', 'q'+question);
+	}
+	
+	randomize_questions();
+	
+	
+	$("#answer span").on("click", function(){
+		var el = $(this);
+		var answer = el.attr("data-val");
+		var isCorrect = question == parseInt(answer);
+
+		if(isCorrect) {
+			el.addClass("correct");
+			sfx3.play();
+			setTimeout(function() {
+				randomize_questions();
+			}, 2000);
+		} else {
+			el.addClass("wrong");
+			sfx2.play();
+		}
+		
+		setTimeout(function() {
+			el.removeClass("correct");
+			el.removeClass("wrong");
+		}, 1000);
+	});
+  </script>
+</body>
+</html>
