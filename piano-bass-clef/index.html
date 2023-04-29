@@ -90,6 +90,9 @@
 	.wrong {
 		background: red;
 	}
+	.answer.disable .block {
+		pointer-events: none;
+	}
   </style>
 </head>
 
@@ -153,6 +156,7 @@
 		var letter = el.attr("data-letter");
 		var correct = letter === answer;
 		el.addClass(correct ? "correct" : "wrong");
+		$('.answer').addClass('disable');
 		
 		if(correct) {
 			sfx1.currentTime = 0;
@@ -164,6 +168,7 @@
 		}
 		
 		setTimeout(function() {
+			$('.answer').removeClass('disable');
 			el.removeClass("correct");
 			el.removeClass("wrong");
 			if(correct){
