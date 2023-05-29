@@ -1,0 +1,155 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#staff-wrapper {
+		position: relative;
+		padding: 50px 20px 70px;
+		margin-top: 50px;
+		background: white;
+	}
+	#color-mode {
+		color: #fff;
+		margin-top: 30px;
+	}
+	#staff > span {
+		display: block;
+		border-bottom: 2px solid black;
+		height: 30px;
+	}
+	#staff.lineno-1 .line-1, #staff.lineno-1 .line-2, #staff.lineno-1 .line-4, #staff.lineno-1 .line-5 {
+		visibility: hidden;
+	}
+	#staff.lineno-3 .line-1, #staff.lineno-3 .line-5 {
+		visibility: hidden;
+	}
+	.note {
+		width: 47px;
+		height: 30px;
+		left: 261px;
+		position: absolute;
+		border-radius: 50%;
+		border: 3px solid black;
+		transform: rotate(-10deg);
+		border-width: 2px 8px;
+	}
+	.note.c {
+		top: 213px;
+	}
+	.note.c:before {
+		content: '';
+		display: block;
+		border-top: 3px solid black;
+		width: 73px;
+		transform: rotate(10deg) translate(-18px, 15px);
+	}
+	.note.d {
+		top: 199px;
+	}
+	.note.e {
+		top: 183px;
+	}
+	.note.f {
+		top: 169px;
+	}
+	.note.g {
+		top: 152px;
+	}
+	.note.a {
+		top: 139px;
+	}
+	.note.b {
+		top: 125px;
+	}
+	.note.c1 {
+		top: 109px;
+	}
+	.note.d1 {
+		top: 94px;
+	}
+	.note.e1 {
+		top: 79px;
+	}
+	#line-number {
+		background: #DFDFDF;
+		padding: 12px;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-12 question">
+			<div id="staff-wrapper" class="color-mode">
+				<div id="staff">
+					<span class="line-1"></span>
+					<span class="line-2"></span>
+					<span class="line-3"></span>
+					<span class="line-4"></span>
+					<span class="line-5"></span>
+				</div>
+				<div id="notes"></div>
+			</div>
+			<div id="line-number">
+				<input name="line-number" type="radio" value="1" checked="true" /> 1 line<br>
+				<input name="line-number" type="radio" value="3" /> 3 lines<br>
+				<input name="line-number" type="radio" value="5" /> 5 lines<br>
+				<input id="refresh" type="submit" name="refresh" value="Refresh" />
+			</div>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+  
+  <script>
+	var questions_1line = ['a','b','c1'];
+	var questions_3line = ['g','a','b','c1','d1'];
+	var questions_3line_2 = ['f','g','a','b','c1','d1','e1'];
+	var questions_5line = ['c','d','e','f','g','a','b','c1','d1','e1'];
+	var random_word;
+	var answer;
+	var linenumber = 1;
+	var question_number = 8;
+	
+	function randomize_note() {
+		var questions = linenumber == 1 ? questions_1line : linenumber == 3 ? questions_3line : questions_5line;
+		return random_question = questions[Math.floor(Math.random() * Math.floor(questions.length))];
+	}
+	
+	function init_question() {
+		$("#staff").attr('class', 'lineno-'+linenumber);
+		var left = 50;
+		var note = '';
+		$(".question #notes").html('');
+		for(var i = 0; i < question_number; i++) {
+			note = randomize_note();
+			$(".question #notes").append("<div class='note "+note+"' style='left:"+left+"px'></div>");
+			left += 100;
+		}
+	}
+	init_question();
+
+	$("#line-number > input").click(function(e){
+		linenumber = Number($(this)[0].value)
+		console.log(linenumber)
+		init_question();
+	})
+	
+	$("#refresh").click(function(e){
+		init_question();
+		return false;
+	})
+  </script>
+</body>
+</html>
