@@ -1,0 +1,240 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	.question {
+		background: white;
+	}
+	.question p {
+		font-size: 25px;
+		margin-bottom: -85px;
+		z-index: 2;
+		position: relative;
+	}
+	.staff-wrapper {
+		position: relative;
+		padding: 50px 20px 42px;
+		margin-top: 50px;
+	}
+	#treble-staff {
+		z-index: 1;
+	}
+	#bass-staff {
+		margin-top: -65px;
+	}
+	#color-mode {
+		color: #fff;
+		margin-top: 30px;
+	}
+	.staff > span {
+		display: block;
+		border-bottom: 2px solid black;
+		height: 30px;
+	}
+	.staff > .line-6 {
+		border-bottom: 2px dashed red;
+		height: 50px;
+	}
+	#treble-clef {
+		position: absolute;
+		width: 125px;
+		top: 43px;
+    	left: 39px;
+	}
+	#bass-clef {
+		position: absolute;
+		width: 90px;
+		top: 80px;
+		left: 39px;
+	}
+	#note {
+		width: 47px;
+		height: 30px;
+		left: 261px;
+		position: absolute;
+		border-radius: 50%;
+		border: 3px solid black;
+		transform: rotate(-10deg);
+		border-width: 2px 8px;
+	}
+	#note.c {
+		top: 234px;
+		left: 160px;
+	}
+	#note.c:before {
+		content: '';
+		display: block;
+		border-top: 3px solid black;
+		width: 73px;
+		transform: rotate(10deg) translate(-18px, 15px);
+	}
+	#note.d {
+		top: 199px;
+		left: 220px;
+	}
+	#note.e, #note.g3 {
+		top: 183px;
+		left: 280px;
+	}
+	#note.f, #note.a3 {
+		top: 169px;
+		left: 340px;
+	}
+	#note.g, #note.b3 {
+		top: 152px;
+		left: 400px;
+	}
+	#note.a, #note.c2 {
+		top: 139px;
+		left: 460px;
+	}
+	#note.b, #note.d2 {
+		top: 125px;
+		left: 520px;
+	}
+	#note.c1, #note.e2 {
+		top: 109px;
+		left: 580px;
+	}
+	#note.d1, #note.f2 {
+		top: 94px;
+		left: 640px;
+	}
+	#note.e1, #note.g2 {
+		top: 79px;
+		left: 700px;
+	}
+	#note.f1, #note.a2 {
+		top: 64px;
+		left: 760px;
+	}
+	#note.b2 {
+		top: 49px;
+		left: 820px;
+	}
+	.block {
+		background: pink;
+		font-size: 40px;
+		border: 5px solid black;
+		text-align: center;
+		text-transform: uppercase;
+	}
+	.correct {
+		background: lightgreen;
+	}
+	.wrong {
+		background: red;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-lg-12 col-sm-12 question">
+			<p>Where are all the note <span id='note-question'>C</span>? (Hint: there are 3 notes)</p>
+			<div id="treble-staff" class="color-mode staff-wrapper">
+				<div class="staff">
+					<span class="line-1"></span>
+					<span class="line-2"></span>
+					<span class="line-3"></span>
+					<span class="line-4"></span>
+					<span class="line-5"></span>
+					<span class="line-6"></span>
+				</div>
+				<img src="../images-library/treble-clef.png" id="treble-clef" />
+				<div id="note" class="c"></div>
+				<div id="note" class="d"></div>
+				<div id="note" class="e"></div>
+				<div id="note" class="f"></div>
+				<div id="note" class="g"></div>
+				<div id="note" class="a"></div>
+				<div id="note" class="b"></div>
+				<div id="note" class="c1"></div>
+				<div id="note" class="d1"></div>
+				<div id="note" class="e1"></div>
+				<div id="note" class="f1"></div>
+			</div>
+			<div id="bass-staff" class="color-mode staff-wrapper">
+				<div class="staff">
+					<span class="line-1"></span>
+					<span class="line-2"></span>
+					<span class="line-3"></span>
+					<span class="line-4"></span>
+					<span class="line-5"></span>
+				</div>
+				<img src="../images-library/bass-clef.png" id="bass-clef" />
+				<div id="note" class="b2"></div>
+				<div id="note" class="a2"></div>
+				<div id="note" class="g2"></div>
+				<div id="note" class="f2"></div>
+				<div id="note" class="e2"></div>
+				<div id="note" class="d2"></div>
+				<div id="note" class="c2"></div>
+				<div id="note" class="b3"></div>
+				<div id="note" class="a3"></div>
+				<div id="note" class="g3"></div>
+			</div>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var questions = ['C','D','E','F','G','A','B'];
+	var random_word;
+	var random_question;
+	var counter = 0;
+	
+	function init_question() {
+		var question_temp = questions[Math.floor(Math.random() * Math.floor(questions.length))];
+		if (random_question === question_temp) {
+			init_question();
+		} else {
+			random_question = question_temp;
+			$("#note-question").html(random_question);
+		}
+	}
+	init_question();
+	
+	$(".container").on("click", "#note", function(){
+		var el = $(this);
+		var letter = el.attr("class");
+		var correct = letter[0] === random_question.toLowerCase();
+		el.addClass(correct ? "correct" : "wrong");
+		
+		if(correct) {
+			sfx1.currentTime = 0;
+			sfx1.play();
+			counter++;
+			
+			if (counter === 3) {
+				setTimeout(function() {
+					$(".container .correct").removeClass("correct");
+					init_question();
+				}, 2000);
+			}
+		} else {
+			sfx2.currentTime = 0;
+			sfx2.play();
+			
+			setTimeout(function() {
+				el.removeClass("wrong");
+			}, 2000);
+		}
+	});
+  </script>
+</body>
+</html>
