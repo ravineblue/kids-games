@@ -1,0 +1,235 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#question {
+		font-size: 50px;
+		margin: 30px 0;
+		color: white;
+	}
+	.buttons {
+		display: flex;
+		flex-flow: column;
+		margin: 20px 0;
+		gap: 20px;
+	}
+	.tens {
+		display: flex;
+		flex-flow: row;
+		cursor: pointer;
+	}
+	.tens > span {
+		width: 30px;
+		height: 30px;
+		border: 1px solid white;
+		background: pink;
+	}
+	.ones {
+		display: block;
+		width: 30px;
+		height: 30px;
+		border: 1px solid white;
+		background: lightblue;
+		cursor: pointer;
+	}
+	
+	#tens-container {
+		display: flex;
+		flex-flow: column;
+		gap: 20px;
+		margin-bottom: 20px;
+	}
+	
+	.tens {
+		position: relative;
+	}
+	
+	.tens:before {
+		content: "10";
+		position: absolute;
+		color: white;
+		font-size: 25px;
+		left: -40px;
+		top: -5px;
+	}
+	
+	#ones-container {
+		display: flex;
+		flex-flow: row;
+		gap: 20px;
+	}
+	
+	.ones {
+		position: relative;
+	}
+	
+	.ones:before {
+		content: "1";
+		position: absolute;
+		color: white;
+		font-size: 25px;
+		left: 5px;
+		top: 30px;
+	}
+	
+	.answer-text {
+		padding-top: 30px;
+		color: #fff;
+		font-size: 60px;
+	}
+	
+	.tens-text {
+		display: inline-block;
+		height: 70px;
+		color: pink;
+	}
+	
+	.ones-text {
+		display: inline-block;
+		height: 70px;
+		color: lightblue;
+	}
+	
+	.answer-text button {
+		display: block;
+		margin-top: 40px;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-7">
+			<div id="question">
+				Make <span class='no'>14</span> blocks
+			</div>
+		</div>
+		<div class="col-5">
+			<div class="buttons">
+				<span id="tens-btn" class="tens">
+					<span></span><span></span><span></span><span></span><span></span>
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+				<span id="ones-btn" class="ones"></span>
+			</div>
+		</div>
+	  </div>
+	  <div class="row">
+		<div class="col-7 answer">
+			<div id="tens-container">
+				<span id="tens-btn" class="tens">
+					<span></span><span></span><span></span><span></span><span></span>
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+				<span id="tens-btn" class="tens">
+					<span></span><span></span><span></span><span></span><span></span>
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+			</div>
+			<div id="ones-container">
+				<span id="ones-btn" class="ones"></span>
+				<span id="ones-btn" class="ones"></span>
+			</div>
+		</div>
+		<div class="col-5 answer-text">
+			<span class="tens-text">20</span>
+			<span class="margin">+</span>
+			<span class="ones-text">2</span>
+			<span class="margin">=</span>
+			<span class="value-text">22</span>
+			
+			<button id="submit">SUBMIT</button>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="../sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	
+	var question = 10;
+	var tens_total = 0;
+	var ones_total = 0;
+	
+	function randomize_questions() {
+		question = Math.floor(Math.random() * 85) + 11;
+		tens_total = 0;
+		ones_total = 0;
+		$("#ones-container").html("");
+		$("#tens-container").html("");
+		$(".tens-text").html("0");
+		$(".ones-text").html("0");
+		$(".value-text").html("?");
+		$("#question .no").html(question);
+	}
+	
+	randomize_questions();
+	
+	$(".buttons #tens-btn").on("click", function(){
+		$("#tens-container").append($(this).prop("outerHTML"));
+		tens_total = tens_total + 10;
+		$(".tens-text").html(tens_total);
+		$(".value-text").html("?");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	$(".answer").on("click", "#tens-btn", function(){
+		$(this).remove();
+		tens_total = tens_total - 10;
+		$(".tens-text").html(tens_total);
+		$(".value-text").html("?");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	
+	$(".buttons #ones-btn").on("click", function(){
+		$("#ones-container").append($(this).prop("outerHTML"));
+		ones_total = ones_total + 1
+		$(".ones-text").html(ones_total);
+		$(".value-text").html("?");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	$(".answer").on("click", "#ones-btn", function(){
+		$(this).remove();
+		ones_total = ones_total - 1;
+		$(".ones-text").html(ones_total);
+		$(".value-text").html("?");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	
+	$("#question .box").on("click", "span", function(){
+		$(this).remove();
+	});
+	
+	$("#submit").on("click", function(){
+		$(".value-text").html(tens_total + ones_total);
+		var isCorrect = question == tens_total + ones_total;
+
+		if(isCorrect) {
+			sfx3.play();
+			setTimeout(function() {
+				randomize_questions();
+			}, 2000);
+		} else {
+			sfx2.play();
+		}
+	});
+  </script>
+</body>
+</html>
