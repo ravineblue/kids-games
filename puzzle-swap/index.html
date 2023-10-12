@@ -61,9 +61,14 @@
   <script src="jquery.ui.touch-punch.min.js"></script>
   <script>
 	// Settings Variables
-	var max_row = 6;
+	var max_row = 3;
 	var max_col = max_row;
-	var puzzle_img = 'images/frozen2.jpg';
+	var puzzle_img = [
+	'images/pony.jpg',
+	'images/baymax.jpg',
+	'images/frozen2.jpg',
+	'images/repunzel.jpg'
+	].sort( () => .5 - Math.random() )[0];
 	
 	var items = [];
 	var sfx1 = document.getElementById("sfx1");
@@ -137,6 +142,22 @@
 	generate_puzzle();
 	shufflePuzzle();
 	
+	function checkPuzzle() {
+		var order_check = 0;
+		var finish = true;
+			console.log($(this).attr("data-val"), order_check);
+		$("#puzzle span").each(function(){
+			if ($(this).attr("data-val") == order_check) {
+				order_check++;
+			} else {
+				finish = false;
+				return false;
+			};
+		});
+		
+		return finish;
+	}
+	
 	$("#puzzle span").on("click", function(){
 		var selected = $("#puzzle span.selected");
 		if (selected.length > 0) {
@@ -149,8 +170,14 @@
 			update_val(row, col, val2);
 			update_val(row2, col2, val);
 			selected.removeClass('selected');
+			
 			sfx1.currentTime = 0;
 			sfx1.play();
+			
+			if (checkPuzzle()) {
+				sfx3.currentTime = 0;
+				sfx3.play();
+			}
 		} else {
 			$(this).addClass("selected");
 		}
