@@ -31,7 +31,7 @@
 		background: pink;
 		text-align: center;
 		font-size: 60px;
-		border: 2px solid black;
+		border: 1px solid black;
 		background-repeat: no-repeat;
 	}
 	#puzzle span i {
@@ -61,13 +61,16 @@
   <script src="jquery.ui.touch-punch.min.js"></script>
   <script>
 	// Settings Variables
-	var max_row = 3;
+	var max_row = 6;
 	var max_col = max_row;
 	var puzzle_img = [
 	'images/pony.jpg',
 	'images/baymax.jpg',
 	'images/frozen2.jpg',
-	'images/repunzel.jpg'
+	'images/repunzel.jpg',
+	'images/cinderella.jpg',
+	'images/pokemon.jpg',
+	'images/ivy.jpg'
 	].sort( () => .5 - Math.random() )[0];
 	
 	var items = [];

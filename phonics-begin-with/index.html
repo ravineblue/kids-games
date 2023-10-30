@@ -22,7 +22,7 @@
 	}
 	#word .blank {
 		display: inline-block;
-		background: green;
+		background: pink;
 		min-width: 83px;
 		height: 90px;
 		top: 35px;
@@ -42,6 +42,12 @@
 		border: 5px solid black;
 		text-align: center;
 		text-transform: uppercase;
+	}
+	.speaker {
+		background: white;
+		height: 30px;
+		border-radius: 50px;
+		margin-top: 21px;
 	}
 	.correct {
 		background: lightgreen;
@@ -68,7 +74,7 @@
 	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
   
   <script>
-	var isDigraphQuestionIncluded = true;
+	var isDigraphQuestionIncluded = false;
 	var sfx1 = document.getElementById("sfx1");
 	var sfx2 = document.getElementById("sfx2");
 	var letters = 'abcdefghijklmnopqrstuvwxyz'.split("");
@@ -128,7 +134,7 @@
 		'snail',
 		'snake',
 		'monkey',
-	];
+	].sort(function (a, b) { return 0.5 - Math.random() });
 	var words2 = [
 		'cheese',
 		'thumb',
@@ -145,18 +151,34 @@
 		'whisker',
 		'wheel',
 		'whisper',
-	];
+	].sort(function (a, b) { return 0.5 - Math.random() });
 	var random_word;
 	var answer;
+	var question_counter = 0;
+	var question_counter2 = 0;
+	var sound_array = {};
+	
+	function loadSound() {
+		for (var i = 0; i<letters.length; i++) {
+			var sound = new Audio('../sfx/phonics/'+letters[i]+'.mp3');
+			sound_array[letters[i]] = sound;
+		}
+		
+		for (var i = 0; i<options2.length; i++) {
+			var sound = new Audio('../sfx/phonics/'+options2[i]+'.mp3');
+			sound_array[options2[i]] = sound;
+		}
+	}
 	
 	function init_question() {
-		random_word = words[Math.floor(Math.random() * Math.floor(words.length))];
+		if (question_counter === words.length) question_counter = 0;
+		random_word = words[question_counter];
 		$("#img").attr('src', '../images-library/'+random_word+'.jpg');
 		var question = random_word.substring(1);
 		answer = random_word.substring(0, 1);
 		$("#word .blank").html('');
 		$("#word .question").html(question);
-		var shuffled_letters = letters.sort(function (a, b) { return 0.5 - Math.random() });
+		var shuffled_letters = letters.filter(function(letter) {return letter !== answer}).sort(function (a, b) { return 0.5 - Math.random() });
 	
 		var options = [
 			random_word.charAt(0),
@@ -168,11 +190,13 @@
 		var shuffled_options = options.sort(function (a, b) { return 0.5 - Math.random() });
 		$(".container .answer").html("");
 		for(var i = 0; i < shuffled_options.length; i++) {
-			$(".container .answer").append("<div class='col-12 block' data-letter='"+shuffled_options[i]+"'>"+shuffled_options[i]+"</div>");
+			$(".container .answer").append("<div class='row'><div class='col-10 block' data-letter='"+shuffled_options[i]+"'>"+shuffled_options[i]+"</div><div class='col-2 speaker' data-letter='"+shuffled_options[i]+"'><img width='30' src='../images-library/speaker.png' /></div></div>");
 		}
+		question_counter++;
 	}
 	function init_question_digraph() {
-		random_word = words2[Math.floor(Math.random() * Math.floor(words2.length))];
+		if (question_counter2 === words2.length) question_counter2 = 0;
+		random_word = words2[question_counter2];
 		$("#img").attr('src', '../images-library/'+random_word+'.jpg');
 		var question = random_word.substring(2);
 		answer = random_word.substring(0, 2);
@@ -181,8 +205,9 @@
 	
 		$(".container .answer").html("");
 		for(var i = 0; i < options2.length; i++) {
-			$(".container .answer").append("<div class='col-12 block' data-letter='"+options2[i]+"'>"+options2[i]+"</div>");
+			$(".container .answer").append("<div class='row'><div class='col-10 block' data-letter='"+options2[i]+"'>"+options2[i]+"</div><div class='col-2 speaker' data-letter='"+options2[i]+"'><img width='30' src='../images-library/speaker.png' /></div></div>");
 		}
+		question_counter2++;
 	}
 	function getQuestion() {
 		const booleanRandom = Math.round(Math.random());
@@ -194,29 +219,52 @@
 			}
 		} else init_question();
 	}
+	
+	
+	loadSound();
 	getQuestion();
+	var inprogress = false;
 	
 	$(".container").on("click", ".block", function(){
+		if (inprogress == false) {
+			inprogress = true;
+			var el = $(this);
+			var letter = el.attr("data-letter");
+			var correct = letter === answer;
+			el.addClass(correct ? "correct" : "wrong");
+			
+			if(correct) {
+				sfx1.currentTime = 0;
+				sfx1.play();
+				$("#word .blank").html(answer);
+			} else {
+				sfx2.currentTime = 0;
+				sfx2.play();
+			}
+			
+			setTimeout(function() {
+				el.removeClass("correct");
+				el.removeClass("wrong");
+				if(correct){
+					getQuestion();
+				}
+				
+				inprogress = false;
+			}, 2000);
+		}
+	});
+	
+	$(".container").on("click", ".speaker", function(){
 		var el = $(this);
 		var letter = el.attr("data-letter");
-		var correct = letter === answer;
-		el.addClass(correct ? "correct" : "wrong");
+		console.log(sound_array, sound_array[letter], letter);
+		var sound = sound_array[letter];
+		//sound.currentTime = 0;
+		sound.play();
 		
-		if(correct) {
-			sfx1.currentTime = 0;
-			sfx1.play();
-			$("#word .blank").html(answer);
-		} else {
-			sfx2.currentTime = 0;
-			sfx2.play();
-		}
-		
-		setTimeout(function() {
-			el.removeClass("correct");
-			el.removeClass("wrong");
-			if(correct){
-				getQuestion();
-			}
+		setTimeout(function(){
+			sound.pause();
+			sound.currentTime = 0;
 		}, 2000);
 	});
   </script>
