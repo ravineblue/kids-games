@@ -19,7 +19,7 @@
 		width: 85px;
 		height: 50px;
 	}
-	#submit {
+	#submit, #merge {
 		width: 85px;
 		height: 50px;
 		font-size: 20px;
@@ -77,6 +77,10 @@
 	
 	.ones {
 		position: relative;
+	}
+	
+	.ones.select {
+		background: orange;
 	}
 	
 	.ones:before {
@@ -186,6 +190,7 @@
 		<div class="col-3 question">
 			= <input type="number" id="answer_box" />
 			<br><input type="submit" id="submit" />
+			<br><br><br><input type="submit" id="merge" value="Merge" />
 		</div>
 	  </div>
 	</div>
@@ -236,9 +241,30 @@
 		sfx1.play();
 	});
 	$(".ones-container").on("click", ".ones", function(){
+		$(this).addClass("select");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	
+	$(".ones-container").on("click", ".ones.select", function(){
 		$(this).remove();
 		sfx1.currentTime = 0;
 		sfx1.play();
+	});
+	
+	$("#merge").on("click", function(){
+		if($(".ones.select").length === 10) {
+			$(".ones.select").remove();
+			$(".tens-container").first().append('<span class="tens">'+
+						'<span></span><span></span><span></span><span></span><span></span>'+
+						'<span></span><span></span><span></span><span></span><span></span>'+
+						'</span>');
+			sfx1.currentTime = 0;
+			sfx1.play();
+		} else {
+			sfx2.currentTime = 0;
+			sfx2.play();
+		}
 	});
 	
 	$("#submit").on("click", function(){

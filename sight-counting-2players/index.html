@@ -1,0 +1,248 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#question {
+		font-size: 30px;
+		margin: 10px 0;
+		color: white;
+	}
+	.buttons {
+		display: flex;
+		flex-flow: column;
+		margin: 20px 0;
+		gap: 20px;
+	}
+	.fives {
+		display: flex;
+		flex-flow: row;
+		cursor: pointer;
+	}
+	.fives > span {
+		width: 30px;
+		height: 30px;
+		border: 1px solid white;
+		background: pink;
+	}
+	.ones {
+		display: block;
+		width: 30px;
+		height: 30px;
+		border: 1px solid white;
+		background: lightblue;
+		cursor: pointer;
+	}
+	
+	#fives-container {
+		display: flex;
+		flex-flow: column;
+		gap: 10px;
+		margin-bottom: 10px;
+		align-items: center;
+	}
+	
+	#ones-container {
+		display: flex;
+		flex-flow: row;
+		gap: 10px;
+		justify-content: center;
+	}
+	.question {
+		flex: 100%;
+	}
+	.player1, .player2 {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 5px;
+		align-self: flex-start;
+		flex: 1;
+		max-width: none;
+	}
+	.player1 span, .player2 span {
+		flex: 1 1 30%;
+		background: red;
+		text-align: center;
+		padding: 10px 0;
+	}
+	.player2 span {
+		background: lightblue;
+	}
+	.player1.correct, .player2.correct {
+		background: green;
+	}
+	.nowrap {
+		flex-wrap: nowrap;
+	}
+	.score {
+		color: white;
+		font-size:30px;
+		margin-bottom: 10px;
+	}
+	.score div:last-child {
+		text-align: right;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div class="row">
+		<div class="col-12">
+			<div id="question">
+				How many blocks?
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="template" style="display: none;">
+				<span class="fives">
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+				<span class="ones"></span>
+			</div>
+		</div>
+	  </div>
+	  <div class="row score">
+		<div class="col-6 score player1-score">
+			Score: <span>0</span>
+		</div>
+		<div class="col-6 score player2-score">
+			Score: <span>0</span>
+		</div>
+	  </div>
+	  <div class="row nowrap">
+		<div class="col-3 player1">
+			<span>0</span>
+			<span>1</span>
+			<span>2</span>
+			<span>3</span>
+			<span>4</span>
+			<span>5</span>
+			<span>6</span>
+			<span>7</span>
+			<span>8</span>
+			<span>9</span>
+			<input type="text" readonly />
+			<button class="reset">CLEAR</button>
+			<button class="submit">OK</button>
+		</div>
+		<div class="col-4 question">
+			<div id="fives-container">
+				<span class="fives">
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+				<span class="fives">
+					<span></span><span></span><span></span><span></span><span></span>
+				</span>
+			</div>
+			<div id="ones-container">
+				<span id="ones-btn" class="ones"></span>
+				<span id="ones-btn" class="ones"></span>
+			</div>
+		</div>
+		<div class="col-3 player2">
+			<span>0</span>
+			<span>1</span>
+			<span>2</span>
+			<span>3</span>
+			<span>4</span>
+			<span>5</span>
+			<span>6</span>
+			<span>7</span>
+			<span>8</span>
+			<span>9</span>
+			<input type="text" readonly />
+			<button class="reset">CLEAR</button>
+			<button class="submit">OK</button>
+		</div>
+	  </div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="../sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	
+	var question = 10;
+	var player1score = 0;
+	var player2score = 0;
+	
+	
+	function randomize_questions() {
+		question = Math.floor(Math.random() * 35) + 11;
+		var ones_total = question % 5;
+		var fives_total = Math.floor(question / 5);
+		console.log(question);
+		var fives = $(".template .fives").prop("outerHTML")
+		var ones = $(".template .ones").prop("outerHTML")
+		
+		$("#fives-container").html("");
+		for (var i = 0; i < fives_total; i++) {
+			$("#fives-container").append($(".template .fives").prop("outerHTML"));
+		}
+		
+		$("#ones-container").html("");
+		for (var i = 0; i < ones_total; i++) {
+			$("#ones-container").append($(".template .ones").prop("outerHTML"));
+		}
+		
+		$(".player1 input, .player2 input").prop("value", "");
+		$(".player1, .player2").removeClass("correct");
+	}
+	
+	randomize_questions();
+	
+	$(".player1 span").on("click", function(){
+		$(".player1 input").prop("value", $(".player1 input").prop("value") + $(this).html())
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	$(".player2 span").on("click", function(){
+		$(".player2 input").prop("value", $(".player2 input").prop("value") + $(this).html())
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	
+	$(".player1 .reset, .player2 .reset").on("click", function(){
+		$(this).parent().find("input").prop("value", "");
+		sfx1.currentTime = 0;
+		sfx1.play();
+	});
+	
+	$(".player1 .submit, .player2 .submit").on("click", function(){
+		var container = $(this).parent();
+		var answer = container.find("input").prop("value");
+		var isCorrect = question == answer;
+		
+		if(isCorrect) {
+			container.addClass("correct");
+			
+			if (container.prop("class").indexOf("player1") > -1) {
+				player1score++;
+			} else player2score++;
+			
+			$(".player1-score span").html(player1score);
+			$(".player2-score span").html(player2score);
+			
+			sfx3.play();
+			setTimeout(function() {
+				randomize_questions();
+			}, 2000);
+		} else {
+			sfx2.play();
+		}
+	});
+  </script>
+</body>
+</html>
