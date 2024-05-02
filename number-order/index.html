@@ -1,0 +1,142 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#question {
+		font-size: 50px;
+		text-align: center;
+		margin: 30px 0 100px;
+		color: white;
+		display: flex;
+		gap: 20px;
+	}
+	#question span {
+		border: 2px solid white;
+		padding: 12px;
+	}
+	#answer {
+		text-align: center;
+	}
+	#answer span {
+		display: inline-block;
+		padding: 15px 50px;
+		background: purple;
+		margin: 5px;
+		font-size: 40px;
+		color: white;
+	}
+	#answer.correct {
+		background: lightgreen;
+	}
+	#answer.wrong {
+		background: red;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+		<div id="question">
+	
+		</div>
+
+		<div id="answer">
+			
+		</div>
+		<button id="submit">Submit Answer</button>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="../sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	
+	var total_number = 10;
+	var number_array = [];
+	var minNumber = 30;
+	var maxNumber = 60;
+	
+	
+	function randomize_number(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min) 
+	}
+	
+	function randomize_questions() {
+		$("#question").html('')
+		$("#answer").html('')
+		for (var i = 0; i < total_number; i++) {
+			var randomize = 0;
+			do {
+				randomize = randomize_number(minNumber, maxNumber)
+			} while (number_array.includes(randomize))
+			
+			number_array.push(randomize)
+			$('#question').append('<span data-val="'+randomize+'">'+randomize+'</span>')
+		}
+	}
+	
+	randomize_questions();
+	
+	$(document).on("click", "#question span", function(){
+		var el = $(this);
+		var answer = el.attr("data-val");
+		el.remove();
+		
+		$("#answer").append('<span data-val="'+answer+'">'+answer+'</span>');
+		sfx1.play();
+	})
+	
+	$(document).on("click", "#answer span", function(){
+		var el = $(this);
+		var answer = el.attr("data-val");
+		el.remove();
+		
+		$("#question").append('<span data-val="'+answer+'">'+answer+'</span>');
+		sfx1.play();
+	})
+	
+	$("#submit").on("click", function(){
+		var isCorrect = true;
+		var prevValue = 0;
+		$("#answer span").each(function (index, el) {
+			var value = $(el).attr("data-val");
+			if (value > prevValue) {
+				prevValue = value;
+			} else {
+				isCorrect = false;
+				return;
+			}
+		})
+
+		if(isCorrect) {
+			$("#answer").addClass("correct");
+			sfx3.play();
+			
+			setTimeout(function() {
+				randomize_questions();
+			}, 2000);
+		} else {
+			$("#answer").addClass("wrong");
+			sfx2.play();
+		}
+		
+		setTimeout(function() {
+			$("#answer").removeClass("correct");
+			$("#answer").removeClass("wrong");
+		}, 1000);
+	});
+  </script>
+</body>
+</html>

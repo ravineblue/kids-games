@@ -1,0 +1,173 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <style>
+	body {
+		background: black center center no-repeat;
+		background-size: 100%;
+	}
+	#question {
+		font-size: 90px;
+		text-align: center;
+		margin: 30px 0 100px;
+		color: white;
+	}
+	#question .answer {
+		color: lightgreen;
+		font-weight: bold;
+		font-size: 100px;
+	}
+	#question .box {
+		background: black;
+		margin-top: 20px;
+		border: 5px solid pink;
+		min-height: 200px;
+		text-align: left;
+		padding: 10px;
+		line-height: 50px;
+	}
+	#question .box span {
+		display: inline-block;
+		width: 50px;
+		height: 50px;
+		background: orange;
+		border-radius: 100px;
+		vertical-align: top;
+		margin-bottom: 10px; 
+		margin-right: 10px;
+	}
+	#question .box span.removed {
+		background: #444;
+		position: relative;
+	}
+	#question .box span.removed:after {
+		content: "";
+		display: block;
+		position: absolute;
+		background: red;
+		width: 120%;
+		height: 5px;
+		top: 25px;
+		left: -10%;
+		transform: rotate(-45deg);
+	}
+	#question .box span.removed:before {
+		content: "";
+		display: block;
+		position: absolute;
+		background: red;
+		width: 120%;
+		height: 5px;
+		top: 25px;
+		left: -10%;
+		transform: rotate(45deg);
+	}
+	#answer {
+		text-align: center;
+	}
+	#answer span {
+		display: inline-block;
+		padding: 15px 50px;
+		background: purple;
+		margin: 5px;
+		font-size: 40px;
+		color: white;
+	}
+	#answer span.correct {
+		background: lightgreen;
+	}
+	#answer span.wrong {
+		background: red;
+	}
+	.compare {
+		border: 2px solid white;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+	  <div id="question">
+		<div class="row">
+			<div class="col-4 number first">
+				0
+			</div>
+			<div class="col-4 compare">?</div>
+			<div class="col-4 number second">
+				0
+			</div>
+		</div>
+	</div>
+
+	<div id="answer">
+		<span data-val="=">=</span>
+		<span data-val=">">></span>
+		<span data-val="<"><</span>
+	</div>
+	</div>
+	
+	<audio id="sfx1" src="../sfx/1.mp3" preload="auto"></audio>
+	<audio id="sfx2" src="../sfx/2.mp3" preload="auto"></audio>
+	<audio id="sfx3" src="../sfx/3.mp3" preload="auto"></audio>
+  
+  <script>
+	var sfx1 = document.getElementById("sfx1");
+	var sfx2 = document.getElementById("sfx2");
+	var sfx3 = document.getElementById("sfx3");
+	
+	var number1 = 1;
+	var number2 = 2;
+	var minNumber = 100;
+	var maxNumber = 999;
+	
+	function randomize_number(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min) 
+	}
+	
+	function randomize_questions() {
+		number1 = randomize_number(minNumber, maxNumber)
+		number2 = randomize_number(minNumber, maxNumber)
+		$(".number.first").html(number1)
+		$(".number.second").html(number2)
+		$(".compare").html('?')
+		
+	}
+	
+	randomize_questions();
+	
+	$("#answer span").on("click", function(){
+		var el = $(this);
+		var answer = el.attr("data-val");
+		var isCorrect = false;
+		if (answer === '=' && number1 === number2) {
+			isCorrect = true;
+		} else if (answer === '>' && number1 > number2) {
+			isCorrect = true;
+		} else if (answer === '<' && number1 < number2) {
+			isCorrect = true;
+		}
+
+		if(isCorrect) {
+			el.addClass("correct");
+			sfx3.play();
+			$(".compare").html(answer);
+			setTimeout(function() {
+				randomize_questions();
+			}, 2000);
+		} else {
+			el.addClass("wrong");
+			sfx2.play();
+		}
+		
+		setTimeout(function() {
+			el.removeClass("correct");
+			el.removeClass("wrong");
+		}, 1000);
+	});
+  </script>
+</body>
+</html>

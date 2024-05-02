@@ -177,10 +177,11 @@
 	var question = 10;
 	var player1score = 0;
 	var player2score = 0;
+	var maxnumber = 40;
 	
 	
 	function randomize_questions() {
-		question = Math.floor(Math.random() * 35) + 11;
+		question = Math.floor(Math.random() * maxnumber) + 1;
 		var ones_total = question % 5;
 		var fives_total = Math.floor(question / 5);
 		console.log(question);
